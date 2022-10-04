@@ -1,3 +1,3 @@
 (fp_lib_table
-  (lib (name "Library")(type "KiCad")(uri "/media/homearray/home/derek/BEETLE/Derek/Hobbies/Electronics/Projects/SpectrumLowerRAM/slrm/Library.pretty")(options "")(descr ""))
+  (lib (name "Library")(type "KiCad")(uri "${KIPRJMOD}/Library.pretty")(options "")(descr ""))
 )
