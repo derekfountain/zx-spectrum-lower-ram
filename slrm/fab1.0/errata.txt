@@ -1,0 +1,23 @@
+===
+The 74HCT574 flip flop latch has footprint:
+ Package_SO:SOIC-20W_7.5x12.8mm_P1.27mm
+I'm working with the SN74HCT574NSR variant of the IC which is 5.6mm wide.
+Hence that footprint needs to be:
+ Package_SO:SO-20_5.3x12.6mm_P1.27mm
+===
+The board works, but "sparkles" appear on the Spectrum's screen. The Z80
+is happy and all tests pass, but the ULA has some different, unspecified
+requirements. Lots of experimentation suggests the SRAM's data needs to
+be held on the data bus for a few nanoseconds after !CAS has gone high.
+In theory the transaction is over by that point, but clearly something
+isn't quite meeting requirements.
+
+So I'm going to break the direct link between !CAS and the SRAM's !OE
+and introduce a delay on the CAS line. It'll fire later, but also
+delay the rising of CAS.
+===
+I changed the silkscreen labelling without changing the schematic, which
+was a bit dumb. Need to fix that.
+===
+I need to get the signals from underneath the inverter where possible.
+I had to take the IC off to cut some tracks.
