@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "SRAM")(type "KiCad")(uri "${KIPRJMOD}/IS62C256AL-45ULI.kicad_sym")(options "")(descr ""))
+)

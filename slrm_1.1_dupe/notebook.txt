@@ -1,0 +1,55 @@
+SRAM used is the IS65C256AL 32K x 8bit. CY62256 is an option, but a
+bit more expensive.
+
+Latch is 74HCT574. Identical to the 373, but the 574 has inputs on one side
+and outputs on the other, which makes latching and passing through a
+bus a lot easier to lay out.
+
+
+ZX Write
+========
+
+RAS falls - we have min tRAH (20ns) to latch it
+<275ns>
+WRITE falls - it will stay down for min tWP (45ns)
+<100ns>
+CAS falls.
+CAS address will stay available for tAR-tRCD(max) (95ns-50ns) is min 45ns.
+
+Data will stay on the bus for min 45ns after CAS falls.
+
+SRAM: Write cycle 1: CE, WR and addr can all go low at once, with
+data input valid at that point. OE not used, can be either.
+
+SRAM: Write cycle 2: CE remains low. OE goes high same time as address
+appears. WR goes low at same time, or shortly after, with data valid at
+that point.
+
+SRAM: Write cycle 3: CE and OE remain low. Address and WR appear at the
+same time, with data valid at that point.
+
+
+ZX Read
+=======
+
+RAS falls - we have min tRAH (20ns) to latch it
+<100ns>
+CAS falls - it will be there for min tCAH (45ns)
+We have a max of tCAC (100ns) to get the data onto the data bus
+Can't work out how long it needs to be there.
+<200ns>
+CAS rises
+<50ns>
+CAS falls
+<75ns>
+RAS rises
+<120ns>
+RAS falls
+CAS rises
+<75ns>
+CAS falls
+<200ns>
+CAS rises
+
+Important point here is that from CAS going low, the SRAM needs
+to have the data on the bus inside 100ns.
