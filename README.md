@@ -3,11 +3,13 @@
 ## A lower RAM module for the ZX Spectrum
 
 This is a hardware module which implements the lower 16K RAM bank for a
-16K or 48K ZX Spectrum microcomputer. The memory bank is normally implemented
-with 8 4116 DRAM ICs. These ICs are no longer in production, and although not
-yet hard to get hold of, the ones which are available are 50 years old and
-have inevitable frailties. This project implements the required 16K of memory
-using a modern SRAM IC.
+16K or 48K ZX Spectrum microcomputer.
+
+The memory bank is normally implemented with 8 4116 DRAM ICs. These
+ICs are no longer in production, and although not yet hard to get hold
+of, the ones which are available are 50 years old and have inevitable
+frailties. This project implements the required 16K of memory using a
+modern SRAM IC.
 
 The project is a plug in replacement, replacing this:
 
@@ -34,7 +36,7 @@ otherwise be required to address 16K.
 None of that is required any more and modern RAM ICs have all the address
 lines they require. The modern design is therefore to use a latch triggered on the row
 address strobe (RAS) to store the first 7 bits of the address, then pass those and
-the other 7 bits bits of the address into the address lines of a modern
+the other 7 bits of the address into the address lines of a modern
 SRAM IC when the CAS signal arrives. It turns out that the SRAM will remove
 its data from its output bus slightly too soon for the Spectrum's ULA, so
 a small timer circuit is needed to slow the CAS signal down a few nanoseconds.
@@ -50,7 +52,7 @@ ULAs. It's possible some timing tweaks might be required for other ULAs.
 The project is implemented in KiCAD v6. It's in the slrm/ directory. ((S)pectrum
 (L)ower ( R)AM (M)odule.)
 
-There are a couple of snapshots of early implementations the project. One of
+There are a couple of snapshots of early implementations of the project. One of
 these is a "breakout" version of the board which might be useful to
 investigate signals using a 'scope.
 
@@ -67,7 +69,7 @@ tight under the Spectrum's keyboard.
 1x [IS62C256AL-25ULI-TR 32K SRAM](https://www.mouser.co.uk/ProductDetail/870-62C256AL-25ULIT)
 32K SRAM IC
 <br>
-1x [74HCT547](https://www.mouser.co.uk/ProductDetail/595-SN74HCT574NSR)
+1x [74HCT574](https://www.mouser.co.uk/ProductDetail/595-SN74HCT574NSR)
 8 bit flip flop latch
 <br>
 1x [74HCT04](https://www.mouser.co.uk/ProductDetail/863-MC74HCT04ADG)
