@@ -73,10 +73,51 @@ Obviously the Spectrum's lid (i.e. keyboard) doesn't fit with one in place.
 
 ## v1.2
 
-The prototype worked. No sparkles. Hurrah! So I tidied up the design and
-sent v1.2 off to JLCPCB for fabrication of what is likely the finalised
-version of the board.
+The prototype worked. No sparkles. Hurrah! At least with the one Spectrum
+and ULA I tried it with.
 
-Details of that and fabrication will follow...
+I tidied up the design and sent v1.2 off to JLCPCB for fabrication. It
+came back looking like this:
 
+![alt text](Images/final_board.jpg "Final board")
 
+That's a 1.00mm board, and you can see I've lost the test points in order
+to make the board smaller. There's not a lot of room under the Spectrum's
+keyboard so it needs to be as compact as possible.
+
+### Trimming the pins
+
+The mechanical aspect of this design is quite interesting. I used Arduino
+style header pins for the connection to the Spectrum. They're 11mm
+which is too long, they make the board stand far too tall:
+
+![alt text](Images/all_plastic_removed.jpg "Plastic removed")
+
+![alt text](Images/board_too_high.jpg "Board too high")
+
+For an early version of the board I tried clipping them with cutters.
+
+![alt text](Images/clip_headers.jpg "Clip headers")
+
+It didn't really work. They're very hard and hefty cutters are required, and
+those bend the cut tips of the headers. It's also very hard to keep them an
+even length. By the time I'd finished at least one pin was too short and the
+board didn't work any more.
+
+Change of plan. I decided to use a Dremel to cut the pins, and in order to
+get the length exactly right and consistent I created a 3D printed jig:
+
+![alt text](Images/jig_in_place.jpg "Jig")
+
+This took all day but made running the Dremel over the pins very simple:
+
+![alt text](Images/dremel_pins.jpg "Dremel pins")
+
+The result is exactly as required:
+
+![alt text](Images/pins_dremelled.jpg "Pins Dremelled")
+
+The board works, and it fits!
+
+![alt text](Images/board_working.jpg "Board working")
+![alt text](Images/keyboard_on_final.jpg "Keyboard on")
