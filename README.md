@@ -2,122 +2,124 @@
 
 ## A lower RAM module for the ZX Spectrum
 
-The ZX Spectrum home computer from the 1980s has two banks of RAM. The "lower"
-RAM is the 16K of DRAM which makes up the address range 0x4000 to 0x7FFF. The
-8 4116 ICs are in the bottom left of the circuit board, as seen here:
+This is a hardware module which implements the lower 16K RAM bank for a
+16K or 48K ZX Spectrum microcomputer. The memory bank is normally implemented
+with 8 4116 DRAM ICs. These ICs are no longer in production, and although not
+yet hard to get hold of, the ones which are available are 50 years old and
+have inevitable frailties. This project implements the required 16K of memory
+using a modern SRAM IC.
+
+The project is a plug in replacement, replacing this:
 
 ![alt text](Images/issue3.jpg "Spectrum circuit board")
 
-These memory ICs are notorious for failing when the Spectrum's internal
-DC-DC converter fails, which it tends to do rather easily. The ICs haven't
-been made for a long time, so the options for a modern repair are old
-stock or a modern replacement.
+with this:
 
-Modern replacement boards are available, but when I wanted one I found there
-are no working, open designs to build yourself. So I created this one.
+![alt text](Images/board_working.jpg "Board working")
+
+(And yes, that's a different Spectrum in those 2 photos. :))
+
+At the time of implemention, there was no open source design for this type
+of memory board. Hence I created one.
 
 ## Design
 
-There are several of these boards available, and they all work the same way.
 The Spectrum uses a multiplexed address system common of low cost micros of
 the 70s and 80s. It addresses the memory ICs twice, first with a 7-bit row
 address ("RAS") value, then about 50ns later with a 7-bit column address
-("CAS")value. That's how the 4116 ICs work. The advange is that it only
-requires 7 address lines, rather than the 14 which would otherwise be
-required to address 16K.
+("CAS") value. That's how the 4116 ICs work. The advange to those ICs is
+that it only requires 7 address lines, rather than the 14 which would
+otherwise be required to address 16K.
 
 None of that is required any more and modern RAM ICs have all the address
-lines they require. The modern design is to use a latch triggered on the row
-address value to store the first 7 bits of the address, then pass those and
+lines they require. The modern design is therefore to use a latch triggered on the row
+address strobe (RAS) to store the first 7 bits of the address, then pass those and
 the other 7 bits bits of the address into the address lines of a modern
-SRAM IC.
+SRAM IC when the CAS signal arrives. It turns out that the SRAM will remove
+its data from its output bus slightly too soon for the Spectrum's ULA, so
+a small timer circuit is needed to slow the CAS signal down a few nanoseconds.
 
-So, an 8-bit latch triggered on RAS to grab the lower part of the address,
-the result of which is fed, along with the upper part of the address, into
-an SRAM on CAS. The output byte of the SRAM is placed directly onto the
-Spectrum's data bus, one bit of which is supplied by each of the 4116 IC
-sockets.
+16K SRAMs are difficult to get hold of these days, and tend to be rather
+expensive. This project uses a 32K SRAM and ignores the top 16K of it.
 
-## v1.0
+I've only tested the design with the Ferranti 6C001E-6 and Ferranti 6C001E-7
+ULAs. It's possible some timing tweaks might be required for other ULAs.
 
-v1.0 of the board worked, but it produced what I termed "sparkles" on the
-screen. It's not a great photo, but they can be seen here:
+## KiCAD Project
 
-![alt text](Images/v10_sparkles.jpg "v1.0 sparkles")
+The project is implemented in KiCAD v6. It's in the slrm/ directory. ((S)pectrum
+(L)ower ( R)AM (M)odule.)
 
-Flickering artefacts, presumably caused by random values in the screen
-memory.
+There are a couple of snapshots of early implementations the project. One of
+these is a "breakout" version of the board which might be useful to
+investigate signals using a 'scope.
 
-It turns out these are produced by the Spectrum's ULA when the timing isn't
-quite right. The Z80 is less fussy and worked fine with the v1.0 board. In
-order to get the ULA happy I needed to hack on a little timing circuit:
+## Fabrication
 
-![alt text](Images/rc_mod.jpg "RC timing mod")
+The Gerber files which can be sent directly for fabrication are to be found
+in slrm/fab1.2/fab1.2.zip. You can just upload that ZIP to JLCPCB (which is
+what I did). Default values for JLCPCB's fabrication process
+will do fine except for the board thickness. Set that to 1.00mm. It's very
+tight under the Spectrum's keyboard.
 
-The variable resistor seen there allowed me to tune the timing and get the
-value right.
+## Bill of Materials
 
-## v1.1
+1x [IS62C256AL-25ULI-TR 32K SRAM](https://www.mouser.co.uk/ProductDetail/870-62C256AL-25ULIT)
+32K SRAM IC
+<br>
+1x [74HCT547](https://www.mouser.co.uk/ProductDetail/595-SN74HCT574NSR)
+8 bit flip flop latch
+<br>
+1x [74HCT04](https://www.mouser.co.uk/ProductDetail/863-MC74HCT04ADG)
+6 circuit inverter
+<br>
+3x [3216 SMD 0.1uF capacitor](https://www.mouser.co.uk/ProductDetail/581-12065C104KAT4A)
+Capacitor
+<br>
+1x [3216 68R SMD resistor](https://www.mouser.co.uk/ProductDetail/603-RT1206FRE0768RL)
+Resistor
+<br>
+1x [3216 SMD 100pF capacitor](https://www.mouser.co.uk/ProductDetail/581-12065A101J)
+Capacitor
+<br>
+22x Arduino type 2.54mm Pin header connectors
 
-That timing circuit made it onto v1.1 of the board, which is a working
-prototype:
+## Assembly
 
-![alt text](Images/prototype.jpg "Prototype")
+Any 62256-standard SRAM IC should work. The ISSI one I chose was the cheapest
+at Mouser. The [Alliance Memory](https://www.mouser.co.uk/ProductDetail/913-CY62256NLL55SNXI)
+one should be fine as well. Solder the SRAM first, then do the latch and the inverter, then
+their decoupling capacitors. Then do the resistor and capacitor for the timer circuit.
+Through the hole footprints are also available for these last two components, but they make
+the keyboard refit extremely tight. They work, but use SMD if you can.
 
-I also created a "breakout" version of this board which allows easier
-connection of probes and bodges:
+## Pin Length
 
-![alt text](Images/debug_board.jpg "Debug board")
+The pins need to protrude below the board and fit into the sockets (or PCB if you're
+soldering directly), but they mustn't be any longer than absolutely necessary
+otherwise the board will stand too proud on the Spectrum PCB and the keyboard won't
+fit back on.
 
-Obviously the Spectrum's lid (i.e. keyboard) doesn't fit with one in place.
-
-## v1.2
-
-The prototype worked. No sparkles. Hurrah! At least with the one Spectrum
-and ULA I tried it with.
-
-I tidied up the design and sent v1.2 off to JLCPCB for fabrication. It
-came back looking like this:
-
-![alt text](Images/final_board.jpg "Final board")
-
-That's a 1.00mm board, and you can see I've lost the test points in order
-to make the board smaller. There's not a lot of room under the Spectrum's
-keyboard so it needs to be as compact as possible.
-
-### Trimming the pins
-
-The mechanical aspect of this design is quite interesting. I used Arduino
-style header pins for the connection to the Spectrum. They're 11mm
-which is too long, they make the board stand far too tall:
-
-![alt text](Images/all_plastic_removed.jpg "Plastic removed")
-
-![alt text](Images/board_too_high.jpg "Board too high")
-
-For an early version of the board I tried clipping them with cutters.
-
-![alt text](Images/clip_headers.jpg "Clip headers")
-
-It didn't really work. They're very hard and hefty cutters are required, and
-those bend the cut tips of the headers. It's also very hard to keep them an
-even length. By the time I'd finished at least one pin was too short and the
-board didn't work any more.
-
-Change of plan. I decided to use a Dremel to cut the pins, and in order to
-get the length exactly right and consistent I created a 3D printed jig:
+The correct length for all the boards I've made up is 4.2mm protruding. This is very
+difficult to get accurate and consistent with cutters, so I made a 3D printed jig.
+That's in the slrm/3D directory, both as an SCAD source file and a STL file. If you
+take this route, place the jig over the pins:
 
 ![alt text](Images/jig_in_place.jpg "Jig")
 
-This took all day but made running the Dremel over the pins very simple:
-
-![alt text](Images/dremel_pins.jpg "Dremel pins")
-
-The result is exactly as required:
+then use a rotary tool or similar to grind the pins to the correct length:
 
 ![alt text](Images/pins_dremelled.jpg "Pins Dremelled")
+![alt text](Images/pins_correct.jpg "Pins Correct")
 
-The board works, and it fits!
+## Fitting
+
+Once assembled, and with the pins the right length, the board then just presses into
+the sockets on the Spectrum PCB:
 
 ![alt text](Images/board_working.jpg "Board working")
-![alt text](Images/keyboard_on_final.jpg "Keyboard on")
+
+Note the fitting: the board doesn't span the entire width of the 8 4116 ICs. The outer
+most sides of the two end sockets aren't used.
+
+[Derek Fountain](https://www.derekfountain.org/), January 2023
