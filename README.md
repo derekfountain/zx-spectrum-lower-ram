@@ -124,4 +124,10 @@ the sockets on the Spectrum PCB:
 Note the fitting: the board doesn't span the entire width of the 8 4116 ICs. The outer
 most sides of the two end sockets aren't used.
 
+## More Information
+
+There's a bit more information on how it works on [my website](https://www.derekfountain.org/my_zx_lower_ram.php),
+and a few more photos and discussion on it over at
+[Spectrum Computing](https://spectrumcomputing.co.uk/forums/viewtopic.php?t=8782).
+
 [Derek Fountain](https://www.derekfountain.org/), January 2023
